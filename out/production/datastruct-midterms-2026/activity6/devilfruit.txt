@@ -42,7 +42,3 @@ Steph
 Bash
 Zoan
 Awakened
-Geo
-Thunder
-Zoan
-Awakened

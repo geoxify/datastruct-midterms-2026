@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         printMainMenu();
         int choice = getValidInt("Menu: ");
-        if (choice > 5 || choice < 1) {
+        if (choice > 7 || choice < 1) {
             main(args);
         } else {
             mainMenu(choice);
@@ -26,13 +26,20 @@ public class Main {
                 System.out.println("Search");
                 break;
             case 3:
-                System.out.println("Delete");
+                System.out.println("Edit");
                 break;
             case 4:
-                System.out.println("Sort");
+                System.out.println("Delete");
                 break;
             case 5:
+                System.out.println("Sort");
+                break;
+            case 6:
                 System.out.println("List");
+                break;
+            case 7:
+                System.out.println("Terminating program...");
+                System.exit(0);
                 break;
             default:
                 System.out.println("Invalid choice!");
@@ -47,9 +54,11 @@ public class Main {
                 ____ Main Menu ____
                 [1] Add
                 [2] Search
-                [3] Delete
-                [4] Sort
-                [5] List
+                [3] Edit
+                [4] Delete
+                [5] Sort
+                [6] List
+                [7] Exit Program
 
                 """);
     }

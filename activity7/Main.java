@@ -1,4 +1,4 @@
-package activity5;
+package activity7;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -16,12 +16,16 @@ public class Main {
     static boolean dataLoaded = false;
 
     public static void main(String[] args) {
-        printMainMenu();
-        int choice = getValidInt("Menu: ");
-        if (choice > 7 || choice < 1) {
-            main(args);
-        } else {
-            mainMenu(choice);
+
+        while (true) {
+            printMainMenu();
+            int choice = getValidInt("Menu: ");
+            if (choice > 7 || choice < 1) {
+                System.out.println("Invalid choice.");
+                main(args);
+            } else {
+                mainMenu(choice);
+            }
         }
 
     }
@@ -32,10 +36,10 @@ public class Main {
                 add();
                 break;
             case 2:
-                System.out.println("Search");
+                search();
                 break;
             case 3:
-                System.out.println("Edit");
+                edit();
                 break;
             case 4:
                 System.out.println("Delete");
@@ -59,7 +63,7 @@ public class Main {
 
     public static void printMainMenu() {
         System.out.print("""
-
+                
                 ____ Main Menu ____
                 [1] Add
                 [2] Search
@@ -68,7 +72,7 @@ public class Main {
                 [5] Sort
                 [6] List
                 [7] Exit Program
-
+                
                 """);
     }
 
@@ -110,7 +114,7 @@ public class Main {
             return;
         }
 
-        String fileName = "activity5/devilfruit.txt";
+        String fileName = "activity7/devilfruit.txt";
         File file = new File(fileName);
 
         try (Scanner fileReader = new Scanner(file)) {
@@ -186,7 +190,7 @@ public class Main {
 
     }
 
-    public static void add(){
+    public static void add() {
         loadDataFromFile();
 
         if (ctr >= MAX_SIZE) {
@@ -226,6 +230,52 @@ public class Main {
                 saveDataToFile();
                 System.out.println("Invalid choice. Entry added at last index by default.");
                 break;
+        }
+
+    }
+
+    public static void search() {
+        // This module will ask the user to input
+        // for an index and display the contents at that index
+        loadDataFromFile();
+        int searchIndex = getValidInt("Choose search index: ");
+
+        for (int i = 0; i <= ctr; i++) {
+            if (i == searchIndex) {
+                System.out.printf("%d. Name: %s\n", i + 1, aNames[i]);
+                System.out.printf("""
+                             Devil Fruit: %s
+                             Type: %s
+                             Status: %s
+                        """, aDevilFruit[i], aType[i], aStatus[i]);
+            }
+        }
+    }
+
+    public static void edit() {
+        loadDataFromFile();
+        int searchIndex = getValidInt("Choose edit index: ");
+        for (int i = 0; i <= ctr; i++) {
+            if (i == searchIndex) {
+                System.out.printf("%d. Name: %s\n", i + 1, aNames[i]);
+                System.out.printf("""
+                             Devil Fruit: %s
+                             Type: %s
+                             Status: %s
+                        """, aDevilFruit[i], aType[i], aStatus[i]);
+            }
+        }
+
+        String edit = getString("Would you like to edit this entry? (Y/N): ");
+        if (edit.equalsIgnoreCase("Y")) {
+            String name = getString("Name: ");
+            String fruit = getString("Devil Fruit: ");
+            String type = getString("Type: ");
+            String status = getString("Status: ");
+
+            insertAtIndex(ctr, name, fruit, type, status);
+            saveDataToFile();
+            System.out.println("Successfully edited.");
         }
 
     }
