@@ -1,282 +1,110 @@
 package activity7;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
-    static Scanner sc = new Scanner(System.in);
-    static final int MAX_SIZE = 50;
-    static String[] aNames = new String[MAX_SIZE];
-    static String[] aDevilFruit = new String[MAX_SIZE];
-    static String[] aType = new String[MAX_SIZE];
-    static String[] aStatus = new String[MAX_SIZE];
-    static int ctr = 0;
-    static boolean dataLoaded = false;
+
+    // --- COLOR PALETTE ---
+    public static final String RESET = "\u001B[0m";
+    public static final String CYAN = "\u001B[36m";
+    public static final String YELLOW = "\u001B[33m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String RED = "\u001B[31m";
+    public static final String WHITE_BOLD = "\033[1;37m";
+    public static final String BLUE_BOLD = "\033[1;34m";
 
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String choice;
 
         while (true) {
-            printMainMenu();
-            int choice = getValidInt("Menu: ");
-            if (choice > 7 || choice < 1) {
-                System.out.println("Invalid choice.");
-                main(args);
+            // Clear screen (optional, works in some terminals)
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+
+            printHeader();
+
+            System.out.println(WHITE_BOLD + " Please choose one of the following:" + RESET);
+            System.out.println(CYAN + " [1] " + RESET + "GEO Grocery ShopperMart POS");
+            System.out.println(CYAN + " [2] " + RESET + "GEO Movie Rental Registration");
+            System.out.println(CYAN + " [3] " + RESET + "GEO Devil Fruit Registration");
+            System.out.println(CYAN + " [4] " + RESET + "Exit");
+
+            System.out.println(CYAN + "------------------------------------------------" + RESET);
+            System.out.print(GREEN + " Enter choice > " + RESET);
+
+            choice = sc.nextLine().trim();
+
+            if (choice.equals("4")) {
+                printExitMessage();
+                break;
+            }
+
+            String programName = "";
+            if (choice.equals("1")) {
+                programName = "EFM Grocery ShopperMart POS";
+            } else if (choice.equals("2")) {
+                programName = "EFM Movie Rental Registration";
+            } else if (choice.equals("3")) {
+                programName = "EFM Devil Fruit Registration";
             } else {
-                mainMenu(choice);
+                System.out.println(RED + "\n Invalid choice! Please try again." + RESET);
+                waitForEnter(sc);
+                continue;
             }
-        }
 
-    }
-
-    public static void mainMenu(int choice) {
-        switch (choice) {
-            case 1:
-                add();
-                break;
-            case 2:
-                search();
-                break;
-            case 3:
-                edit();
-                break;
-            case 4:
-                System.out.println("Delete");
-                break;
-            case 5:
-                System.out.println("Sort");
-                break;
-            case 6:
-                list();
-                break;
-            case 7:
-                System.out.println("Terminating program...");
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Invalid choice!");
-                mainMenu(choice);
-                break;
-        }
-    }
-
-    public static void printMainMenu() {
-        System.out.print("""
-                
-                ____ Main Menu ____
-                [1] Add
-                [2] Search
-                [3] Edit
-                [4] Delete
-                [5] Sort
-                [6] List
-                [7] Exit Program
-                
-                """);
-    }
-
-    public static int getValidInt(String prompt) {
-        while (true) {
+            // Loading Animation
+            System.out.print("\n" + YELLOW + " Loading " + programName + RESET);
             try {
-                System.out.print(prompt);
-                int num = sc.nextInt();
-                sc.nextLine(); // clear buffer
-                return num;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a whole number.");
-                sc.nextLine(); // clear bad input
+                for (int i = 0; i < 5; i++) {
+                    System.out.print(YELLOW + "." + RESET);
+                    Thread.sleep(400);
+                }
+                System.out.println("\n"); // New line after dots
+            } catch (InterruptedException e) {
+                System.out.println();
             }
-        }
-    }
 
-    public static double getValidDouble(String prompt) {
-        while (true) {
+            // --- RUN SELECTED PROGRAM ---
+            // Note: Ensure sub-programs do NOT contain 'sc.close()' or the menu will break.
             try {
-                System.out.print(prompt);
-                double num = sc.nextDouble();
-                sc.nextLine(); // clear buffer
-                return num;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid number format. Try again.");
-                sc.nextLine(); // clear bad input
-            }
-        }
-    }
-
-    public static String getString(String prompt) {
-        System.out.print(prompt);
-        return sc.nextLine();
-    }
-
-    public static void loadDataFromFile() {
-        if (dataLoaded) {
-            return;
-        }
-
-        String fileName = "activity7/devilfruit.txt";
-        File file = new File(fileName);
-
-        try (Scanner fileReader = new Scanner(file)) {
-            ctr = 0;
-            while (fileReader.hasNextLine() && ctr < MAX_SIZE) {
-                aNames[ctr] = fileReader.nextLine();
-
-                if (!fileReader.hasNextLine()) {
-                    break;
+                if (choice.equals("1")) {
+                    activity7.grocery.Main.main(args);
+                } else if (choice.equals("2")) {
+                    activity7.movieregistration.MovieRegistration.main(args);
+                } else if (choice.equals("3")) {
+                    activity7.devilfruitregistration.Main.main(args);
                 }
-                aDevilFruit[ctr] = fileReader.nextLine();
-
-                if (!fileReader.hasNextLine()) {
-                    break;
-                }
-                aType[ctr] = fileReader.nextLine();
-
-                if (!fileReader.hasNextLine()) {
-                    break;
-                }
-                aStatus[ctr] = fileReader.nextLine();
-
-                ctr++;
+            } catch (Exception e) {
+                System.out.println(RED + "An error occurred in the module: " + e.getMessage() + RESET);
             }
-            dataLoaded = true;
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            System.out.println(CYAN + "\n------------------------------------------------" + RESET);
+            System.out.println(GREEN + " Module execution finished." + RESET);
+            waitForEnter(sc);
         }
+
+        sc.close();
     }
 
-    public static void insertAtIndex(int index, String name, String fruit, String type, String status) {
-        for (int i = ctr; i > index; i--) {
-            aNames[i] = aNames[i - 1];
-            aDevilFruit[i] = aDevilFruit[i - 1];
-            aType[i] = aType[i - 1];
-            aStatus[i] = aStatus[i - 1];
-        }
-
-        aNames[index] = name;
-        aDevilFruit[index] = fruit;
-        aType[index] = type;
-        aStatus[index] = status;
-        ctr++;
+    private static void printHeader() {
+        System.out.println(BLUE_BOLD + "\n================================================" + RESET);
+        System.out.println(BLUE_BOLD + "         GEO ENTERPRISE SYSTEMS v1.0            " + RESET);
+        System.out.println(BLUE_BOLD + "================================================" + RESET);
+        System.out.println(WHITE_BOLD + "         We've got it all for you!              " + RESET);
+        System.out.println(BLUE_BOLD + "================================================\n" + RESET);
     }
 
-    public static void saveDataToFile() {
-        String fileName = "activity5/devilfruit.txt";
-        File file = new File(fileName);
-
-        try (PrintWriter writer = new PrintWriter(file)) {
-            for (int i = 0; i < ctr; i++) {
-                writer.println(aNames[i]);
-                writer.println(aDevilFruit[i]);
-                writer.println(aType[i]);
-                writer.println(aStatus[i]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private static void printExitMessage() {
+        System.out.println(BLUE_BOLD + "\n================================================" + RESET);
+        System.out.println(WHITE_BOLD + "   Thank you for using GEO Enterprise Systems   " + RESET);
+        System.out.println(BLUE_BOLD + "================================================" + RESET);
+        System.out.println(GREEN + "               Goodbye!                         " + RESET);
+        System.out.println(BLUE_BOLD + "================================================\n" + RESET);
     }
 
-    public static void list() {
-        loadDataFromFile();
-
-        for (int a = 0; a < ctr; a++) { // print the array
-            System.out.printf("%d. Name: %s\n", a + 1, aNames[a]);
-            System.out.printf("""
-                         Devil Fruit: %s
-                         Type: %s
-                         Status: %s
-                    """, aDevilFruit[a], aType[a], aStatus[a]);
-        }
-
-    }
-
-    public static void add() {
-        loadDataFromFile();
-
-        if (ctr >= MAX_SIZE) {
-            System.out.println("Array is full. Cannot add more entries.");
-            return;
-        }
-
-        String name = getString("Name: ");
-        String fruit = getString("Devil Fruit: ");
-        String type = getString("Type: ");
-        String status = getString("Status: ");
-
-        System.out.println("Insert options:");
-        System.out.println("[1] Last index available");
-        System.out.println("[2] First index");
-        System.out.println("[3] Middle index");
-        int insertChoice = getValidInt("Choose insert position: ");
-
-        switch (insertChoice) {
-            case 1:
-                insertAtIndex(ctr, name, fruit, type, status);
-                saveDataToFile();
-                System.out.println("Entry added at last index.");
-                break;
-            case 2:
-                insertAtIndex(0, name, fruit, type, status);
-                saveDataToFile();
-                System.out.println("Entry inserted at first index.");
-                break;
-            case 3:
-                insertAtIndex(ctr / 2, name, fruit, type, status);
-                saveDataToFile();
-                System.out.println("Entry inserted at middle index.");
-                break;
-            default:
-                insertAtIndex(ctr, name, fruit, type, status);
-                saveDataToFile();
-                System.out.println("Invalid choice. Entry added at last index by default.");
-                break;
-        }
-
-    }
-
-    public static void search() {
-        // This module will ask the user to input
-        // for an index and display the contents at that index
-        loadDataFromFile();
-        int searchIndex = getValidInt("Choose search index: ");
-
-        for (int i = 0; i <= ctr; i++) {
-            if (i == searchIndex) {
-                System.out.printf("%d. Name: %s\n", i + 1, aNames[i]);
-                System.out.printf("""
-                             Devil Fruit: %s
-                             Type: %s
-                             Status: %s
-                        """, aDevilFruit[i], aType[i], aStatus[i]);
-            }
-        }
-    }
-
-    public static void edit() {
-        loadDataFromFile();
-        int searchIndex = getValidInt("Choose edit index: ");
-        for (int i = 0; i <= ctr; i++) {
-            if (i == searchIndex) {
-                System.out.printf("%d. Name: %s\n", i + 1, aNames[i]);
-                System.out.printf("""
-                             Devil Fruit: %s
-                             Type: %s
-                             Status: %s
-                        """, aDevilFruit[i], aType[i], aStatus[i]);
-            }
-        }
-
-        String edit = getString("Would you like to edit this entry? (Y/N): ");
-        if (edit.equalsIgnoreCase("Y")) {
-            String name = getString("Name: ");
-            String fruit = getString("Devil Fruit: ");
-            String type = getString("Type: ");
-            String status = getString("Status: ");
-
-            insertAtIndex(ctr, name, fruit, type, status);
-            saveDataToFile();
-            System.out.println("Successfully edited.");
-        }
-
+    private static void waitForEnter(Scanner sc) {
+        System.out.print(YELLOW + " Press [ENTER] to return to Main Menu..." + RESET);
+        sc.nextLine();
     }
 }

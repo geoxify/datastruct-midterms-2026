@@ -1,133 +1,110 @@
 package activity4;
 
-import java.io.File;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
-    static Scanner sc = new Scanner(System.in);
+
+    // --- COLOR PALETTE ---
+    public static final String RESET = "\u001B[0m";
+    public static final String CYAN = "\u001B[36m";
+    public static final String YELLOW = "\u001B[33m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String RED = "\u001B[31m";
+    public static final String WHITE_BOLD = "\033[1;37m";
+    public static final String BLUE_BOLD = "\033[1;34m";
 
     public static void main(String[] args) {
-        printMainMenu();
-        int choice = getValidInt("Menu: ");
-        if (choice > 7 || choice < 1) {
-            main(args);
-        } else {
-            mainMenu(choice);
-        }
+        Scanner sc = new Scanner(System.in);
+        String choice;
 
-    }
-
-    public static void mainMenu(int choice) {
-        switch (choice) {
-            case 1:
-                System.out.println("Add");
-                break;
-            case 2:
-                System.out.println("Search");
-                break;
-            case 3:
-                System.out.println("Edit");
-                break;
-            case 4:
-                System.out.println("Delete");
-                break;
-            case 5:
-                System.out.println("Sort");
-                break;
-            case 6:
-                list();
-                break;
-            case 7:
-                System.out.println("Terminating program...");
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Invalid choice!");
-                mainMenu(choice);
-                break;
-        }
-    }
-
-    public static void printMainMenu() {
-        System.out.print("""
-
-                ____ Main Menu ____
-                [1] Add
-                [2] Search
-                [3] Edit
-                [4] Delete
-                [5] Sort
-                [6] List
-                [7] Exit Program
-
-                """);
-    }
-
-    public static int getValidInt(String prompt) {
         while (true) {
+            // Clear screen (optional, works in some terminals)
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+
+            printHeader();
+
+            System.out.println(WHITE_BOLD + " Please choose one of the following:" + RESET);
+            System.out.println(CYAN + " [1] " + RESET + "GEO Grocery ShopperMart POS");
+            System.out.println(CYAN + " [2] " + RESET + "GEO Movie Rental Registration");
+            System.out.println(CYAN + " [3] " + RESET + "GEO Devil Fruit Registration");
+            System.out.println(CYAN + " [4] " + RESET + "Exit");
+
+            System.out.println(CYAN + "------------------------------------------------" + RESET);
+            System.out.print(GREEN + " Enter choice > " + RESET);
+
+            choice = sc.nextLine().trim();
+
+            if (choice.equals("4")) {
+                printExitMessage();
+                break;
+            }
+
+            String programName = "";
+            if (choice.equals("1")) {
+                programName = "EFM Grocery ShopperMart POS";
+            } else if (choice.equals("2")) {
+                programName = "EFM Movie Rental Registration";
+            } else if (choice.equals("3")) {
+                programName = "EFM Devil Fruit Registration";
+            } else {
+                System.out.println(RED + "\n Invalid choice! Please try again." + RESET);
+                waitForEnter(sc);
+                continue;
+            }
+
+            // Loading Animation
+            System.out.print("\n" + YELLOW + " Loading " + programName + RESET);
             try {
-                System.out.print(prompt);
-                int num = sc.nextInt();
-                sc.nextLine(); // clear buffer
-                return num;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a whole number.");
-                sc.nextLine(); // clear bad input
+                for (int i = 0; i < 5; i++) {
+                    System.out.print(YELLOW + "." + RESET);
+                    Thread.sleep(400);
+                }
+                System.out.println("\n"); // New line after dots
+            } catch (InterruptedException e) {
+                System.out.println();
             }
-        }
-    }
 
-    public static double getValidDouble(String prompt) {
-        while (true) {
+            // --- RUN SELECTED PROGRAM ---
+            // Note: Ensure sub-programs do NOT contain 'sc.close()' or the menu will break.
             try {
-                System.out.print(prompt);
-                double num = sc.nextDouble();
-                sc.nextLine(); // clear buffer
-                return num;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid number format. Try again.");
-                sc.nextLine(); // clear bad input
-            }
-        }
-    }
-
-    public static String getString(String prompt) {
-        System.out.print(prompt);
-        return sc.nextLine();
-    }
-
-    public static void list() {
-        String fileName = "activity4/devilfruit.txt";
-        File file = new File(fileName);
-
-        try (Scanner fileReader = new Scanner(file);) {
-            String aNames[] = new String[50];
-            String aDevilFruit[] = new String[50];
-            String aType[] = new String[50];
-            String aStatus[] = new String[50];
-            int ctr = 0;
-            while (fileReader.hasNextLine()) {
-                aNames[ctr] = fileReader.nextLine();
-                aDevilFruit[ctr] = fileReader.nextLine();
-                aType[ctr] = fileReader.nextLine();
-                aStatus[ctr] = fileReader.nextLine();
-                ctr++;
+                if (choice.equals("1")) {
+                    activity4.grocery.Main.main(args);
+                } else if (choice.equals("2")) {
+                    activity4.movieregistration.MovieRegistration.main(args);
+                } else if (choice.equals("3")) {
+                    activity4.devilfruitregistration.Main.main(args);
+                }
+            } catch (Exception e) {
+                System.out.println(RED + "An error occurred in the module: " + e.getMessage() + RESET);
             }
 
-            for (int a = 0; a < ctr; a++) { // print the array
-                System.out.printf("%d. Name: %s\n", a + 1, aNames[a]);
-                System.out.printf("""
-                             Devil Fruit: %s
-                             Type: %s
-                             Status: %s
-                        """, aDevilFruit[a], aType[a], aStatus[a]);
-            }
-
-            fileReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(CYAN + "\n------------------------------------------------" + RESET);
+            System.out.println(GREEN + " Module execution finished." + RESET);
+            waitForEnter(sc);
         }
 
+        sc.close();
+    }
+
+    private static void printHeader() {
+        System.out.println(BLUE_BOLD + "\n================================================" + RESET);
+        System.out.println(BLUE_BOLD + "         GEO ENTERPRISE SYSTEMS v1.0            " + RESET);
+        System.out.println(BLUE_BOLD + "================================================" + RESET);
+        System.out.println(WHITE_BOLD + "         We've got it all for you!              " + RESET);
+        System.out.println(BLUE_BOLD + "================================================\n" + RESET);
+    }
+
+    private static void printExitMessage() {
+        System.out.println(BLUE_BOLD + "\n================================================" + RESET);
+        System.out.println(WHITE_BOLD + "   Thank you for using GEO Enterprise Systems   " + RESET);
+        System.out.println(BLUE_BOLD + "================================================" + RESET);
+        System.out.println(GREEN + "               Goodbye!                         " + RESET);
+        System.out.println(BLUE_BOLD + "================================================\n" + RESET);
+    }
+
+    private static void waitForEnter(Scanner sc) {
+        System.out.print(YELLOW + " Press [ENTER] to return to Main Menu..." + RESET);
+        sc.nextLine();
     }
 }
